@@ -4,6 +4,8 @@
 /*global utils*/
 /*global DataStore*/
 /*global ShipPlacer*/
+/*global AudioPlayer*/
+/*global UserSettings*/
 
 var elContainer;
 
@@ -21,6 +23,20 @@ function init() {
   dataStore = new DataStore();
 
   localPlayer = new LocalPlayer();
+
+  AudioPlayer.init({
+    'isEnabled': UserSettings.get(UserSettings.SOUND_ENABLED),
+    'baseSrc': 'sounds',
+    'effectsVolume': UserSettings.get(UserSettings.EFFECTS_VOLUME),
+    'musicVolume': UserSettings.get(UserSettings.MUSIC_VOLUME),
+    'sounds': {
+      'SHOT_MISS': 'fire.wav',
+      'SHOT_HIT': 'fire.wav',
+
+      'WIN': 'win.mp3',
+      'LOSE': 'lose.wave'
+    }
+  });
 
   playOffline();
 
@@ -45,9 +61,12 @@ function playOffline() {
   }
 
   game = new Game();
+
   elContainer.appendChild(game.el);
 
+  game.on(game.GUESS, onGameGuess);
   game.on(game.START, onGameStarted);
+  game.on(game.END, onGameEnd);
 
   game.addPlayer(localPlayer);
   game.addPlayer(otherPlayer);
@@ -71,6 +90,18 @@ function onClickOtherBoard(data) {
     } else {
       console.warn('not your turn')
     }
+  }
+}
+
+function onGameGuess(data) {
+  AudioPlayer.play(AudioPlayer.SHOT_MISS);
+}
+
+function onGameEnd(data) {
+  if (data.playerWon.player.isLocal) {
+    AudioPlayer.play(AudioPlayer.WIN);
+  } else {
+    AudioPlayer.play(AudioPlayer.LOSE);
   }
 }
 
@@ -148,6 +179,7 @@ function onClickOtherBoard(data) {
     this.currentPlayer = -1;
     this.shipPlacer;
 
+    this.GUESS = 'guess';
     this.START = 'start';
     this.END = 'end';
 
@@ -292,16 +324,28 @@ function onClickOtherBoard(data) {
     var board = data.board;
     var row = data.row;
     var col = data.col;
+    var slot = board.getSlotAt(row, col);
 
     if (!board) {
       console.warn('No board to guess!', data);
       return false;
     }
 
+    if (!slot) {
+      console.warn('Not valid slot', data);
+      return false;
+    }
+
     if (!board.canGuess(row, col)) {
-      console.warn('cant guess');
+      console.warn('cant guess?');
       return;
     }
+
+    this.dispatch(this.GUESS, {
+      'board': board,
+      'slot': slot,
+      'player': player
+    });
 
     board.markAsGuessed(row, col);
     var hasGameEnded = this.checkBoard(board);

@@ -38,7 +38,7 @@ var l10n = {
       return el.matches? el.matches(selector) :
              el.mozMatchesSelector? el.mozMatchesSelector(selector) :
              el.msMatchesSelector? el.msMatchesSelector(selector) :
-             el;
+             null;
     },
 
     storage: {
