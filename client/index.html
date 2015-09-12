@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Battleships</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+  </head>
+  <body>
+    <div id="container">
+      <div class="ui">
+        <button onclick="playOffline();" class="offline">Play Offline (vs AI)</button>
+        <button onclick="playOnline();" class="online">Play Online (vs a Player)</button>
+      </div>
+
+      <div class="chat"></div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/shared/Config.js"></script>
+    <script src="/shared/EventDispatcher.js"></script>
+    <script src="/js/common.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/ShipPlacer.js"></script>
+    <script src="/js/main.js"></script>
+  </body>
+</html>

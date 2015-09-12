@@ -1,0 +1,480 @@
+div, p, ul, li, h1, h2 {
+  margin: 0;
+  padding: 0;
+}
+
+ul {
+  list-style-type: none;
+}
+
+body {
+  font: normal 15px Arial;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+#container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  background: linear-gradient(to right, rgba(10, 10, 10, 1) 0%,
+                                        rgba(30, 30, 30, 1) 50%,
+                                        rgba(10, 10, 10, 1) 100%);
+}
+
+.ui {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 5px 0;
+  z-index: 20;
+}
+  .ui button {
+    height: 32px;
+    width: 160px;
+    margin: 0 5px;
+  }
+  .ui button.disabled {
+    color: #aaa;
+  }
+
+.ready {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 250px;
+  height: 50px;
+  margin: 300px 0 0 -125px;
+  font-size: 1.7em;
+  z-index: 100;
+  transition: opacity 120ms ease-out;
+}
+.game:not(.has-local-player) .ready {
+  display: none;
+}
+.game:not(.state-0) .ready {
+  opacity: 0;
+  pointer-events: none;
+}
+.ready.disabled {
+  color: #aaa;
+}
+
+.game-state {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 600px;
+  padding: 8px;
+  margin-left: -300px;
+  z-index: 10;
+  background: linear-gradient(to bottom, rgba(50, 50, 50, 1), rgba(0, 0, 0, 1));
+  box-shadow: 0 0 10px 0 rgba(0, 255, 0, .6);
+}
+  .game-state > .status {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    font-family: monospace;
+    color: lime;
+    line-height: 80px;
+  }
+.player.local-true {
+  float: left;
+}
+.player.local-false {
+  float: right;
+}
+
+.player {
+  position: relative;
+  width: 160px;
+  height: 60px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 1);
+  background: linear-gradient(to bottom, #eee, #bbb);
+  opacity: 0;
+}
+.player.visible {
+  opacity: 1;
+}
+  .player .avatar {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 52px;
+    margin: 4px;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 1),
+                0 0 0 1px rgba(255, 255, 255, 1) inset;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
+  .player .content {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 62px;
+    padding: 1px 0;
+  }
+    .player .content .name {
+      font-size: 1.3em;
+    }
+    .player .content .status {
+      font-style: italic;
+      font-size: 1em;
+    }
+
+.game {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  perspective: 1200px;
+}
+  .board {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 0;
+    background: #000;
+    transform-style: preserve-3d;
+    transition: opacity 600ms ease-in-out 1450ms,
+                transform 600ms ease-in-out 1450ms;
+  }
+
+  .board.local-false {
+    transform: translate(-50%, -100px) rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(0);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .board.local-true {
+    transform: translate(-50%, -60%) rotateX(25deg);
+  }
+
+  .game.in-progress .board.local-false {
+    opacity: 1;
+    pointer-events: inherit;
+    transform: translate(-50%, -50%) rotateX(25deg) rotateY(0deg) rotateZ(0deg);
+  }
+  .game.in-progress .board.local-true {
+    transform: translate(290px, -50%) rotateX(0deg) rotateY(-50deg) rotateZ(0deg) scale(0.6);
+  }
+    .board canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    .board .side {
+      position: absolute;
+      transform-origin: 0% 0%;
+      background: #222;
+      transition: transform 600ms ease-in;
+    }
+    .board .bottom {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, rgba(54, 74, 64, 0.3),
+                                         rgba(74, 94, 84, 0.6));
+      transform: translateZ(-64px) translateY(0%) rotateY(180deg);
+    }
+    .board .side.left,
+    .board .side.right {
+      top: 0;
+      bottom: 0;
+      width: 64px;
+      margin: -1px 0px;
+    }
+    .board .side.up,
+    .board .side.down {
+      left: 0;
+      right: 0;
+      height: 64px;
+    }
+
+    .board .side.left {
+      left: 0;
+      transform: rotateY(90deg);
+    }
+    .board .side.right {
+      right: 0;
+      transform-origin: 100% 0%;
+      transform: rotateY(-90deg);
+    }
+    .board .side.up {
+      top: 0;
+      transform: rotateX(-90deg);
+    }
+    .board .side.down {
+      bottom: 0;
+      transform-origin: 0% 100%;
+      transform: rotateX(90deg);
+    }
+
+
+    .game.in-progress .board.local-true .side.left {
+      transform: rotateY(270deg);
+    }
+    .game.in-progress .board.local-true .side.right {
+      transform: rotateY(-270deg);
+    }
+    .game.in-progress .board.local-true .side.up {
+      transform: rotateX(-270deg);
+    }
+    .game.in-progress .board.local-true .side.down {
+      transform: rotateX(270deg);
+    }
+    .game.in-progress .board.local-true .bottom {
+      animation: close-bottom 900ms linear 400ms 1;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes close-bottom {
+      0% {
+        transform: translateZ(-64px) translateX(0) rotateY(180deg);
+      }
+      30% {
+        transform: translateZ(-96px) translateX(150%) rotateY(190deg);
+      }
+      55% {
+        transform: translateZ(96px) translateX(100%) rotateY(190deg);
+      }
+      80% {
+        transform: translateZ(96px) translateX(0) rotateY(190deg);
+      }
+      100% {
+        transform: translateZ(64px) translateX(0) rotateY(180deg);
+      }
+    }
+
+    .board .slots {
+      position: relative;
+      transform: translateZ(0px);
+    }
+    .board .row {
+      white-space: nowrap;
+    }
+    .board canvas {
+
+    }
+    .board .slot {
+      position: relative;
+      display: inline-block;
+      z-index: 5;
+      box-shadow: 0 0 5px 0 rgba(45, 228, 55, .3),
+                  0 0 0 1px rgba(15, 158, 51, .2) inset;
+    }
+    .board.local-false .slot:not(.guessed):hover {
+      background: url('http://www.clipartbest.com/cliparts/9TR/arR/9TRarRyTe.png') 50% / 80% no-repeat;
+    }
+    .board.local-false .slot:not(.guessed):active {
+      background-size: 70%;
+    }
+    .board .slot.guessed {
+      background: linear-gradient(to bottom, rgba(255, 255, 255, .4) 0px, rgba(255, 255, 255, 0) 1px),
+                  linear-gradient(to right, rgba(255, 255, 255, .4) 0px, rgba(255, 255, 255, 0) 1px);
+      background-size: 9px, 9px;
+    }
+    .board .slot.guessed:not(.free) {
+      background-color: rgba(205, 0, 0, 0.2);
+    }
+
+    .board .ships {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      pointer-events: none;
+      transform: translateZ(0px);
+    }
+      .board .ship {
+        position: absolute;
+        z-index: 2;
+        pointer-events: none;
+        transform-origin: 0 0;
+        background: rgba(255, 255, 255, .1);
+      }
+      .board .ship.vertical {
+        transform: rotate(90deg);
+      }
+
+.ship {
+  position: relative;
+}
+  .ship .image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+  }
+  .ship .name {
+    display: none;
+  }
+
+.avatars {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  height: 58px;
+  background: #ddd;
+  z-index: 20;
+  opacity: 0;
+  transform: translate(-50%, -100%);
+  pointer-events: none;
+  transition: transform 120ms ease-out,
+              opacity 120ms ease-out;
+}
+.avatars.visible {
+  opacity: 1;
+  transform: translate(-50%, 0%);
+  pointer-events: inherit;
+}
+  .avatars li {
+    position: relative;
+    float: left;
+    width: 70px;
+    height: 70px;
+    margin: 0 4px;
+    border: 1px solid black;
+    background: #fff;
+    cursor: pointer;
+    opacity: .85;
+    transform: scale(.75);
+    transform-origin: 50% 0%;
+    transition: transform 120ms ease-in-out,
+                opacity 120ms ease-in-out;
+  }
+  .avatars li:hover,
+  .avatars li.selected {
+    z-index: 5;
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 3px 0 rgba(0, 0, 0, .7);
+  }
+  .avatars li:hover {
+    z-index: 10;
+  }
+  .avatars li:hover:before,
+  .avatars li.selected:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: -15px;
+  }
+    .avatars li .image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      margin: 2px;
+      background-position: 50% 50%;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
+.ship-placer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 100%;
+  margin-right: -1px;
+  width: 200px;
+  z-index: 30;
+  background: linear-gradient(to right, rgba(0, 70, 30, .5), rgba(0, 50, 10, .5));
+  padding: 5px;
+  box-shadow: 0 0 0 2px black inset;
+  transform: rotateY(-170deg);
+  transform-origin: 100% 50%;;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  transition: transform 800ms ease-in-out;
+}
+.game.state-0 .ship-placer {
+  transform: rotateY(30deg);
+}
+  .ship-placer .ship {
+    position: relative;
+    width: 100%;
+    height: 78px;
+    margin-top: 5px;
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow: 0 0 0 2px #333 inset;
+    background: #999;
+    transition: transform 140ms ease-in-out,
+                background 140ms ease-in-out,
+                opacity 140ms ease-in-out;
+  }
+  .ship-placer .ship:hover {
+    background: #aaa;
+    z-index: 5;
+  }
+  .ship-placer .ship.picked-up {
+    opacity: .3;
+    background: #bbb;
+    z-index: 15;
+  }
+  .ship-placer .ship.placed {
+    opacity: .3;
+  }
+    .ship-placer .ship.placed .name {
+      text-decoration: line-through;
+    }
+    .ship-placer .ship .image {
+      z-index: 1;
+    }
+    .ship-placer .ship .name {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      font-size: 20px;
+      margin: 2px 5px;
+      z-index: 5;
+      display: block;
+    }
+    .ship-placer .ship .size {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 5px;
+      z-index: 5;
+      opacity: .7;
+    }
+      .ship-placer .ship .size .row {
+        display: block;
+        clear: both;
+      }
+        .ship-placer .ship .size .row b {
+          float: right;
+          width: 18px;
+          height: 18px;
+          margin-left: -1px;
+          margin-bottom: -1px;
+          background: linear-gradient(135deg, rgba(255, 255, 255, .5), rgba(255, 255, 255, .1));
+          box-shadow: 0 0 0 1px #000 inset;
+        }
